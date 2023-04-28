@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Breakdown Table</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<!-- Include the navigation bar -->
+<div th:replace="fragments/navbar.html :: navbar"></div>
+
+<!-- Page content goes here -->
+<h2 class="text-center mt-5">Breakdown Details</h2>
+
+<!-- Add a Bootstrap table to display the breakdown data -->
+<table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+    <tr>
+        <th>Model</th>
+        <th>Timestamp</th>
+        <th>Location</th>
+        <th>Error Code</th>
+        <th>Status</th>
+        <th>Need Aid?</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="breakdown : ${breakdownList}">
+        <td th:text="${breakdown.model}"></td>
+        <td th:text="${breakdown.timestamp}"></td>
+        <td>
+            <a th:href="@{'#'}"
+               target="_blank">
+                <img src="https://img.icons8.com/color/48/000000/google-maps-new.png"/>
+            </a>
+        </td>
+        <td th:text="${breakdown.errorCode}"></td>
+        <td th:text="${breakdown.status}"></td>
+        <td>
+            <form method="post" th:action="@{/breakdown/aid/request}" th:object="${breakdown}">
+                <input type="hidden" name="id" th:value="${breakdown.id}"/>
+                <button type="submit" class="btn btn-primary">Request Aid</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<h2 class="text-center mt-5">Available Aids nearby</h2>
+<table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+    <tr>
+        <th>Service Provider</th>
+        <th>Phone</th>
+        <th>Address</th>
+        <th>Location</th>
+        <th>Request Aid?</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="provider : ${aidProviderList}">
+        <td th:text="${provider.getName}"></td>
+        <td th:text="${provider.getPhone}"></td>
+        <td th:text="${provider.getAddress()}"></td>
+        <td>
+            <a th:href="@{'#'}"
+               target="_blank">
+                <img src="https://img.icons8.com/color/48/000000/google-maps-new.png"/>
+            </a>
+        </td>
+        <td>
+            <form th:if="${breakdownList.size()>0}" method="post" th:action="@{/breakdown/aid/request}" th:object="${breakdownList.get(0)}">
+                <input type="hidden" name="id" th:value="${breakdownList.get(0).id}"/>
+                <button type="submit" class="btn btn-primary">Request Aid</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- Bootstrap JS -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>
